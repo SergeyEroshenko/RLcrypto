@@ -107,12 +107,13 @@ class Parser:
         delta_price = abs(curr_price - start_price)
         delta_time = curr_time - start_time
         if (delta_price >= self.stop_price) | (delta_time >= self.stop_time):
+            timestamp = start_time.isoformat()
             self.trades.to_csv(
-                os.path.join(self.save_path, f'{start_time}_trades.csv'),
+                os.path.join(self.save_path, f'{timestamp}_trades.csv'),
                 sep=';'
             )
             self.orderbook.to_csv(
-                os.path.join(self.save_path, f'{start_time}_orderbook.csv'),
+                os.path.join(self.save_path, f'{timestamp}_orderbook.csv'),
                 sep=';'
             )
             exit()
@@ -128,7 +129,7 @@ class Parser:
         return data
 
 
-async def main(conn, symbol):
+async def main(conn, parser, symbol):
 
     await conn.run()
     tasks = [
@@ -149,4 +150,4 @@ if __name__ == '__main__':
     conn = Connector()
     parser = Parser(stop_price, stop_time, save_path)
 
-    asyncio.run(main(conn, symbol))
+    asyncio.run(main(conn, parser, symbol))
